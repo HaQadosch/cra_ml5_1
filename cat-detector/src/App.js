@@ -5,9 +5,9 @@ import { CatImage } from './components/CatImage'
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
+      <main className="App-header">
         <CatImage />
-      </header>
+      </main>
     </div>
   );
 }
