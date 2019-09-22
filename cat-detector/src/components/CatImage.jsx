@@ -15,11 +15,38 @@ export const CatImage = () => {
   const [predictions, setPredictions] = useState([])
   const imgRef = useRef(null)
   
+  let classifier
+
   function onLoaded (options, model) {
     console.log('Model Loaded!', {options, model})
-    model.predict(imgRef.current, function(err, results) {
-      console.log({ results, err })
+    model && model.predict(imgRef.current, 10, function(err, results) {
+      console.log({ modelPredict: results, err })
       if (results) setPredictions(results)
+    })
+
+    classifier.predict(imgRef.current, 10, function(err, results) {
+      console.log({ classifierPredict: results, err })
+      if (results) setPredictions(results)
+    })
+    
+    const newImg = new Image(400, 400)
+    newImg.src="/index.png"
+    
+    model && model.predict(newImg, 10, function(err, results) {
+      console.log({ newImgModelPredict: results, err, newImg })
+      if (results) setPredictions(results)
+    })
+    classifier.predict(newImg, 10, function(err, results) {
+      console.log({ newImgClassifierPredict: results, err })
+      if (results) setPredictions(results)
+    })
+
+    const yolo = ml5.YOLO()
+    yolo.detect(newImg, (err, res) => {
+      console.log({yolo, err, newImg: res})
+    })
+    yolo.detect(imgRef.current, (err, res) => {
+      console.log({yolo, err, newImg: res})
     })
   }
 
@@ -27,7 +54,7 @@ export const CatImage = () => {
   useEffect(() => {
     unsplash
       .photos
-      .getRandomPhoto({query: 'cat', count: 1})
+      .getRandomPhoto({query: 'boat', count: 1})
       .then(res => {
         const {ok, statusText} = res
         if (!ok) {
@@ -42,7 +69,7 @@ export const CatImage = () => {
         setImgWidth(width)
         setImgHeight(height)
       })
-      .then(() => ml5.imageClassifier('MobileNet', onLoaded))
+      .then(() => { classifier = ml5.imageClassifier('MobileNet', onLoaded) })
       .catch(err => console.error(err))
   }, [])
 
