@@ -13,7 +13,8 @@ export const CatImage = () => {
   const [imgWidth, setImgWidth] = useState(0)
   const [imgHeight, setImgHeight] = useState(0)
   const [predictions, setPredictions] = useState([])
-  const imgRef = useRef(null)
+  const imgRef = useRef("")
+  const imgRef2 = useRef(null)
   
   let classifier
 
@@ -26,6 +27,16 @@ export const CatImage = () => {
 
     classifier.predict(imgRef.current, 10, function(err, results) {
       console.log({ classifierPredict: results, err })
+      if (results) setPredictions(results)
+    })
+
+    model && model.predict(imgRef2.current, 10, function(err, results) {
+      console.log({ modelPredict2: results, err })
+      if (results) setPredictions(results)
+    })
+
+    classifier.predict(imgRef2.current, 10, function(err, results) {
+      console.log({ classifierPredict2: results, err })
       if (results) setPredictions(results)
     })
     
@@ -78,6 +89,10 @@ export const CatImage = () => {
       <figure>
         <img src={imgSrc} alt={imgDesc} ref={imgRef} width={imgWidth} height={imgHeight} />
         <figcaption>{imgDesc}</figcaption>
+      </figure>
+      <figure>
+        <img src='cat.jpeg' alt="cat laying down" ref={imgRef2} width={2700} height={1800} />
+        <figcaption>cat enjoying a comfy sofa</figcaption>
       </figure>
       <section>
         <ul>
